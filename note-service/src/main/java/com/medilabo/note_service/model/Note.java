@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,9 +15,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Note {
 
     @Id
-    private String id; // L'ID technique Mongo (ex: "65a4...")
+    private String id; // L'ID technique Mongo
 
     private Integer patId; // L'ID du patient (1, 2, 3 ou 4)
-    private String patient; // Le nom (informatif)
+    private String patient; // Le nom
     private String note;    // Le contenu du médecin
+
+    private LocalDateTime date; // Champ date
 }
