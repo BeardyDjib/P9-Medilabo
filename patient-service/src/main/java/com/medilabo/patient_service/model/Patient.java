@@ -5,7 +5,7 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "patients")
+@Table(name = "patient")
 @Data // Génère les Getters, Setters, toString, equals, hashCode
 @NoArgsConstructor // Génère le constructeur vide (obligatoire pour JPA)
 @AllArgsConstructor // Génère le constructeur avec tous les arguments (utilisé par DataInitializer)
