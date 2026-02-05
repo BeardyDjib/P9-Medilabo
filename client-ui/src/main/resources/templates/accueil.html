@@ -24,7 +24,7 @@
           <th>Genre</th>
           <th>Adresse</th>
           <th>Téléphone</th>
-        </tr>
+          <th>Actions</th> </tr>
         </thead>
         <tbody>
         <tr th:each="p : ${patients}">
@@ -35,6 +35,13 @@
           <td th:text="${p.genre}">M</td>
           <td th:text="${p.adresse}">123 Rue</td>
           <td th:text="${p.telephone}">0600000000</td>
+
+          <td>
+            <a th:href="@{/patient/{id}(id=${p.id})}" class="btn btn-info btn-sm text-white">
+              Voir dossier
+            </a>
+          </td>
+
         </tr>
         </tbody>
       </table>
