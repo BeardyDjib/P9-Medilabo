@@ -8,6 +8,5 @@ import java.util.List;
 
 @Repository
 public interface NoteRepository extends MongoRepository<Note, String> {
-    // Méthode magique pour trouver les notes d'un patient précis
     List<Note> findByPatId(Integer patId);
 }

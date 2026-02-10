@@ -15,23 +15,20 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // Désactivation de la protection CSRF pour permettre les requêtes POST/PUT/DELETE sur l'API
+                // Désactivation CSRF (nécessaire pour les POST/PUT via Postman ou Feign)
                 .csrf(csrf -> csrf.disable())
 
-                // Autorisation de l'affichage dans des frames (nécessaire pour la console H2)
+                // Autorisation H2 Console
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
 
-                // Configuration des règles d'accès aux endpoints
+                // RÈGLES D'ACCÈS
                 .authorizeHttpRequests(auth -> auth
-                        // Accès libre à la console H2
-                        .requestMatchers("/h2-console/**").permitAll()
-                        // Authentification requise pour tous les autres appels API
-                        .anyRequest().authenticated()
+                        // Autoriser l'accès public à TOUTES les URL (pour le dev)
+                        .anyRequest().permitAll()
                 )
 
-                // Activation de l'authentification Basic (pour les tests API et l'inter-service)
+                // On garde la config standard au cas où, mais permitAll() est prioritaire
                 .httpBasic(withDefaults())
-                // Activation du formulaire de login par défaut
                 .formLogin(withDefaults());
 
         return http.build();
