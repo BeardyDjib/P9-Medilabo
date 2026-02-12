@@ -6,17 +6,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 /**
- * Proxy Feign pour la communication avec le microservice Patient-Service.
+ * Proxy Feign pour la communication avec le microservice de gestion des patients.
  */
-@FeignClient(name = "patient-service", url = "localhost:9001")
+@FeignClient(name = "patient-service", url = "${patient-service.url:http://localhost:9001}")
 public interface PatientProxy {
 
     /**
-     * Récupère un patient via son identifiant unique.
-     * @param id Identifiant du patient
-     * @return Les informations du patient
+     * Récupère les informations d'un patient par son identifiant unique.
+     *
+     * @param id L'identifiant du patient.
+     * @return   Un objet Patient contenant les données administratives.
      */
-    // CORRECTION ICI : Ajout de "/api" pour correspondre au PatientController
     @GetMapping("/api/patients/{id}")
     Patient getPatientById(@PathVariable("id") Long id);
 }

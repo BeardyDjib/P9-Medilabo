@@ -1,0 +1,1 @@
+memberSearchIndex = [{"p":"com.medilabo.gateway_service","c":"GatewayServiceApplication","l":"GatewayServiceApplication()","u":"%3Cinit%3E()"},{"p":"com.medilabo.gateway_service","c":"GatewayServiceApplication","l":"main(String[])","u":"main(java.lang.String[])"}];updateSearchResults();

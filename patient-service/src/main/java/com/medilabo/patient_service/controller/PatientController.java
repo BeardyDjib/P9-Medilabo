@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Contrôleur REST pour la gestion des patients.
+ */
 @RestController
 @RequestMapping("/api/patients")
 public class PatientController {
@@ -19,8 +22,8 @@ public class PatientController {
     }
 
     /**
-     * Récupère la liste complète des patients enregistrés.
-     * @return Liste des patients
+     * Liste tous les patients présents en base de données.
+     * @return Une liste d'objets Patient.
      */
     @GetMapping
     public List<Patient> getAllPatients() {
@@ -28,31 +31,30 @@ public class PatientController {
     }
 
     /**
-     * Récupère un patient spécifique via son identifiant unique.
-     * @param id Identifiant du patient
-     * @return Le patient trouvé ou une erreur 404 si inexistant
+     * Récupère les informations d'un patient par son ID.
+     *
+     * @param id L'identifiant du patient.
+     * @return Le patient trouvé ou une réponse 404.
      */
     @GetMapping("/{id}")
     public ResponseEntity<Patient> getPatientById(@PathVariable Long id) {
         Optional<Patient> patient = patientRepository.findById(id);
-
         return patient.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     /**
-     * Met à jour les informations d'un patient existant.
-     * @param id Identifiant du patient à modifier
-     * @param patientDetails Les nouvelles données du patient reçues au format JSON
-     * @return Le patient mis à jour
+     * Met à jour les données d'un patient existant.
+     *
+     * @param id             L'identifiant du patient à modifier.
+     * @param patientDetails Les nouvelles informations.
+     * @return Le patient mis à jour.
      */
     @PutMapping("/{id}")
     public ResponseEntity<Patient> updatePatient(@PathVariable Long id, @RequestBody Patient patientDetails) {
-        // Recherche du patient existant ou levée d'une exception si non trouvé
         Patient patient = patientRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Patient introuvable pour l'id :: " + id));
 
-        // Mise à jour des champs
         patient.setPrenom(patientDetails.getPrenom());
         patient.setNom(patientDetails.getNom());
         patient.setDateDeNaissance(patientDetails.getDateDeNaissance());
@@ -60,9 +62,7 @@ public class PatientController {
         patient.setAdresse(patientDetails.getAdresse());
         patient.setTelephone(patientDetails.getTelephone());
 
-        // Sauvegarde des modifications en base de données
         final Patient updatedPatient = patientRepository.save(patient);
-
         return ResponseEntity.ok(updatedPatient);
     }
 }

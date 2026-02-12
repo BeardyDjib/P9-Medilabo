@@ -8,9 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Contrôleur REST exposant l'API d'évaluation du risque de diabète.
- * Ce point d'entrée permet aux applications clientes (ex: client-ui) de solliciter
- * une analyse de risque pour un patient spécifique.
+ * Contrôleur REST fournissant les analyses de risque de diabète.
  */
 @RestController
 @RequestMapping("/assess")
@@ -18,14 +16,20 @@ public class AssessmentController {
 
     private final AssessmentService assessmentService;
 
+    /**
+     * Constructeur injectant le service d'évaluation.
+     *
+     * @param assessmentService Le service de calcul des risques.
+     */
     public AssessmentController(AssessmentService assessmentService) {
         this.assessmentService = assessmentService;
     }
 
     /**
-     * Récupère le rapport de risque de diabète pour un patient donné via son identifiant.
-     * @param id Identifiant unique du patient (patId)
-     * @return Le niveau de risque sous forme de texte (None, Borderline, In Danger, Early onset)
+     * Récupère le niveau de risque calculé pour un patient.
+     *
+     * @param id L'identifiant unique du patient.
+     * @return   Une réponse contenant le libellé du risque.
      */
     @GetMapping("/{id}")
     public ResponseEntity<String> getAssessmentByPatientId(@PathVariable("id") Long id) {

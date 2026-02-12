@@ -1,0 +1,5 @@
+com.medilabo.assessment_service
+com.medilabo.assessment_service.controller
+com.medilabo.assessment_service.model
+com.medilabo.assessment_service.proxies
+com.medilabo.assessment_service.service

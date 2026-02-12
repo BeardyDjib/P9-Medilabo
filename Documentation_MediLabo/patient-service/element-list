@@ -1,0 +1,5 @@
+com.medilabo.patient_service
+com.medilabo.patient_service.config
+com.medilabo.patient_service.controller
+com.medilabo.patient_service.model
+com.medilabo.patient_service.repository

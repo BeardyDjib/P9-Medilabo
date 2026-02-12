@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.medilabo.patient_service"},{"l":"com.medilabo.patient_service.config"},{"l":"com.medilabo.patient_service.controller"},{"l":"com.medilabo.patient_service.model"},{"l":"com.medilabo.patient_service.repository"}];updateSearchResults();

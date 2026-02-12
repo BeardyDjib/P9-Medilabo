@@ -1,0 +1,49 @@
+name: MediLabo CI/CD Pipeline
+
+# Le pipeline se déclenche à chaque push ou pull-request sur la branche main
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    # On définit une matrice pour tester tous les services en même temps
+    strategy:
+      matrix:
+        service: [
+          'patient-service',
+          'note-service',
+          'assessment-service',
+          'gateway-service',
+          'client-ui'
+        ]
+
+    steps:
+      # 1. Récupération du code source
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Installation de Java (On utilise la version 21 détectée dans tes logs)
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      # 3. Compilation et Tests unitaires avec Maven
+      - name: Build and Test with Maven
+        run: |
+          cd ${{ matrix.service }}
+          chmod +x mvnw
+          ./mvnw clean package
+
+      # 4. (Optionnel) Génération de la Javadoc pour vérification
+      - name: Check Javadoc generation
+        run: |
+          cd ${{ matrix.service }}
+          ./mvnw javadoc:javadoc -DfailOnError=false

@@ -2,6 +2,7 @@ package com.medilabo.client_ui.dto;
 
 import java.time.LocalDateTime;
 
+
 public class NoteDto {
 
     private String id;
@@ -10,11 +11,18 @@ public class NoteDto {
     private String note;
     private LocalDateTime date;
 
-    // --- 1. Constructeur Vide (Obligatoire) ---
     public NoteDto() {
     }
 
-    // --- 2. Constructeur Complet (Pratique) ---
+    /**
+     * Constructeur complet permettant d'initialiser tous les attributs de la note.
+     *
+     * @param id      L'identifiant technique de la note.
+     * @param patId   L'identifiant du patient.
+     * @param patient Le nom du patient.
+     * @param note    Le contenu de la note.
+     * @param date    La date d'enregistrement.
+     */
     public NoteDto(String id, Integer patId, String patient, String note, LocalDateTime date) {
         this.id = id;
         this.patId = patId;
@@ -22,8 +30,6 @@ public class NoteDto {
         this.note = note;
         this.date = date;
     }
-
-    // --- 3. GETTERS ET SETTERS ---
 
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }

@@ -12,9 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Service métier chargé de la logique d'évaluation du risque de diabète.
- * Ce service agrège les données des microservices distants (Patient et Note)
- * pour produire un rapport de risque basé sur des règles prédéfinies.
+ * Service métier gérant la logique de calcul du risque de diabète.
  */
 @Service
 public class AssessmentService {
@@ -23,28 +21,26 @@ public class AssessmentService {
     private final NoteProxy noteProxy;
 
     private static final List<String> DECLENCHEURS = List.of(
-            "hémoglobine a1c",
-            "microalbumine",
-            "taille",
-            "poids",
-            "fumeur",
-            "anormal",
-            "cholestérol",
-            "vertiges",
-            "rechute",
-            "réaction",
-            "anticorps"
+            "hémoglobine a1c", "microalbumine", "taille", "poids", "fumeur",
+            "anormal", "cholestérol", "vertiges", "rechute", "réaction", "anticorps"
     );
 
+    /**
+     * Constructeur injectant les proxies nécessaires à la récupération des données.
+     *
+     * @param patientProxy Proxy pour les données administratives.
+     * @param noteProxy    Proxy pour l'historique des notes.
+     */
     public AssessmentService(PatientProxy patientProxy, NoteProxy noteProxy) {
         this.patientProxy = patientProxy;
         this.noteProxy = noteProxy;
     }
 
     /**
-     * Génère un rapport de risque pour un patient donné.
-     * @param patientId Identifiant unique du patient
-     * @return Le niveau de risque calculé (None, Borderline, In Danger, Early onset)
+     * Génère un diagnostic de risque pour un patient spécifique.
+     *
+     * @param patientId L'identifiant du patient.
+     * @return          Le niveau de risque (None, Borderline, In Danger, Early onset).
      */
     public String generateAssessment(Long patientId) {
         Patient patient = patientProxy.getPatientById(patientId);
@@ -58,76 +54,56 @@ public class AssessmentService {
     }
 
     /**
-     * Calcule l'âge d'un patient à partir de sa date de naissance.
-     * @param dateDeNaissance Date de naissance du patient
-     * @return Âge en années
+     * Calcule l'âge à partir de la date de naissance.
+     *
+     * @param dateDeNaissance La date de naissance du patient.
+     * @return                L'âge en années.
      */
     private int calculAge(LocalDate dateDeNaissance) {
-        if (dateDeNaissance == null) {
-            return 0;
-        }
+        if (dateDeNaissance == null) return 0;
         return Period.between(dateDeNaissance, LocalDate.now()).getYears();
     }
 
     /**
-     * Analyse les notes médicales pour compter le nombre de termes déclencheurs uniques.
-     * La recherche est insensible à la casse.
-     * @param notes Liste des notes du patient
-     * @return Nombre de termes déclencheurs trouvés
+     * Compte le nombre de termes déclencheurs présents dans l'historique des notes.
+     *
+     * @param notes La liste des notes médicales.
+     * @return      Le nombre total de mots-clés uniques identifiés.
      */
     private int compteDeclencheurs(List<Note> notes) {
-        int compteur = 0;
-
-        // Concaténation de toutes les notes en une seule chaîne minuscule pour l'analyse
         String contenuNotes = notes.stream()
                 .map(note -> note.getNote() != null ? note.getNote().toLowerCase() : "")
                 .collect(Collectors.joining(" "));
 
-        for (String declencheur : DECLENCHEURS) {
-            if (contenuNotes.contains(declencheur)) {
-                compteur++;
-            }
-        }
-        return compteur;
+        return (int) DECLENCHEURS.stream()
+                .filter(contenuNotes::contains)
+                .count();
     }
 
     /**
-     * Applique les règles métier pour déterminer le niveau de risque.
-     * @param age Âge du patient
-     * @param genre Genre du patient (M/F)
-     * @param nombreDeclencheurs Nombre de symptômes identifiés
-     * @return Le libellé du risque
+     * Applique les règles métier pour définir le niveau de risque final.
+     *
+     * @param age                Âge du patient.
+     * @param genre              Genre du patient (M/F).
+     * @param nombreDeclencheurs Nombre de symptômes détectés.
+     * @return                   Le libellé du niveau de risque.
      */
     private String determineRisk(int age, String genre, int nombreDeclencheurs) {
-        if (nombreDeclencheurs == 0) {
-            return "None";
-        }
+        if (nombreDeclencheurs == 0) return "None";
 
         if (age > 30) {
-            if (nombreDeclencheurs >= 8) {
-                return "Early onset";
-            } else if (nombreDeclencheurs >= 6) {
-                return "In Danger";
-            } else if (nombreDeclencheurs >= 2) {
-                return "Borderline";
-            }
+            if (nombreDeclencheurs >= 8) return "Early onset";
+            if (nombreDeclencheurs >= 6) return "In Danger";
+            if (nombreDeclencheurs >= 2) return "Borderline";
         } else {
-            // Logique pour les moins de 30 ans
             if ("M".equals(genre)) {
-                if (nombreDeclencheurs >= 5) {
-                    return "Early onset";
-                } else if (nombreDeclencheurs >= 3) {
-                    return "In Danger";
-                }
+                if (nombreDeclencheurs >= 5) return "Early onset";
+                if (nombreDeclencheurs >= 3) return "In Danger";
             } else if ("F".equals(genre)) {
-                if (nombreDeclencheurs >= 7) {
-                    return "Early onset";
-                } else if (nombreDeclencheurs >= 4) {
-                    return "In Danger";
-                }
+                if (nombreDeclencheurs >= 7) return "Early onset";
+                if (nombreDeclencheurs >= 4) return "In Danger";
             }
         }
-
         return "None";
     }
 }

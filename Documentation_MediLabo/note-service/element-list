@@ -1,0 +1,5 @@
+com.medilabo.note_service
+com.medilabo.note_service.config
+com.medilabo.note_service.controller
+com.medilabo.note_service.model
+com.medilabo.note_service.repository

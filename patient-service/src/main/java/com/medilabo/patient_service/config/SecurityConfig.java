@@ -8,26 +8,28 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+/**
+ * Configuration de la sécurité pour le microservice Patient.
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
+    /**
+     * Définit la chaîne de filtres de sécurité.
+     *
+     * @param http L'objet de configuration HTTP.
+     * @return La chaîne de filtres configurée.
+     * @throws Exception En cas d'erreur de configuration.
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // Désactivation CSRF (nécessaire pour les POST/PUT via Postman ou Feign)
                 .csrf(csrf -> csrf.disable())
-
-                // Autorisation H2 Console
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
-
-                // RÈGLES D'ACCÈS
                 .authorizeHttpRequests(auth -> auth
-                        // Autoriser l'accès public à TOUTES les URL (pour le dev)
                         .anyRequest().permitAll()
                 )
-
-                // On garde la config standard au cas où, mais permitAll() est prioritaire
                 .httpBasic(withDefaults())
                 .formLogin(withDefaults());
 
