@@ -4,9 +4,9 @@ import com.medilabo.assessment_service.model.Note;
 import com.medilabo.assessment_service.model.Patient;
 import com.medilabo.assessment_service.proxies.NoteProxy;
 import com.medilabo.assessment_service.proxies.PatientProxy;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -31,8 +31,19 @@ class AssessmentServiceTest {
     @Mock
     private NoteProxy noteProxy;
 
-    @InjectMocks
     private AssessmentService assessmentService;
+
+    /**
+     * Initialise le service avec ses dépendances mockées et la liste des déclencheurs avant chaque test.
+     */
+    @BeforeEach
+    void setUp() {
+        List<String> mockTriggers = Arrays.asList(
+                "hémoglobine a1c", "microalbumine", "taille", "poids", "fumeur",
+                "anormal", "cholestérol", "vertiges", "rechute", "réaction", "anticorps"
+        );
+        assessmentService = new AssessmentService(patientProxy, noteProxy, mockTriggers);
+    }
 
     /**
      * Vérifie que le diagnostic "None" est retourné lorsqu'aucun déclencheur n'est présent.

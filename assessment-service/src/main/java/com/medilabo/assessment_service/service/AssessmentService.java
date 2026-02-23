@@ -4,6 +4,7 @@ import com.medilabo.assessment_service.model.Note;
 import com.medilabo.assessment_service.model.Patient;
 import com.medilabo.assessment_service.proxies.NoteProxy;
 import com.medilabo.assessment_service.proxies.PatientProxy;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -19,21 +20,22 @@ public class AssessmentService {
 
     private final PatientProxy patientProxy;
     private final NoteProxy noteProxy;
-
-    private static final List<String> DECLENCHEURS = List.of(
-            "hémoglobine a1c", "microalbumine", "taille", "poids", "fumeur",
-            "anormal", "cholestérol", "vertiges", "rechute", "réaction", "anticorps"
-    );
+    private final List<String> declencheurs;
 
     /**
-     * Constructeur injectant les proxies nécessaires à la récupération des données.
+     * Constructeur injectant les proxies nécessaires à la récupération des données
+     * et la liste des déclencheurs depuis les fichiers de configuration.
      *
      * @param patientProxy Proxy pour les données administratives.
      * @param noteProxy    Proxy pour l'historique des notes.
+     * @param declencheurs Liste des mots-clés de risque injectée via properties.
      */
-    public AssessmentService(PatientProxy patientProxy, NoteProxy noteProxy) {
+    public AssessmentService(PatientProxy patientProxy,
+                             NoteProxy noteProxy,
+                             @Value("${medilabo.assessment.triggers}") List<String> declencheurs) {
         this.patientProxy = patientProxy;
         this.noteProxy = noteProxy;
+        this.declencheurs = declencheurs;
     }
 
     /**
@@ -75,7 +77,7 @@ public class AssessmentService {
                 .map(note -> note.getNote() != null ? note.getNote().toLowerCase() : "")
                 .collect(Collectors.joining(" "));
 
-        return (int) DECLENCHEURS.stream()
+        return (int) declencheurs.stream()
                 .filter(contenuNotes::contains)
                 .count();
     }
