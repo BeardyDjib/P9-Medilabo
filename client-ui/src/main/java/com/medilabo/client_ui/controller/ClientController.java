@@ -45,8 +45,7 @@ public class ClientController {
      */
     @RequestMapping("/")
     public String accueil(Model model){
-        String authHeader = "Basic dXNlcjpwYXNzd29yZA==";
-        List<PatientDto> patients = patientProxy.patients(authHeader);
+        List<PatientDto> patients = patientProxy.patients();
         model.addAttribute("patients", patients);
         return "accueil";
     }
@@ -60,14 +59,12 @@ public class ClientController {
      */
     @GetMapping("/patient/{id}")
     public String fichePatient(@PathVariable("id") long id, Model model) {
-        String authHeader = "Basic dXNlcjpwYXNzd29yZA==";
-
-        PatientDto patient = patientProxy.getPatient(id, authHeader);
-        List<NoteDto> notes = noteProxy.getNotesByPatientId((int) id, authHeader);
+        PatientDto patient = patientProxy.getPatient(id);
+        List<NoteDto> notes = noteProxy.getNotesByPatientId((int) id);
 
         String risque;
         try {
-            risque = assessmentProxy.getAssessment(id, authHeader);
+            risque = assessmentProxy.getAssessment(id);
         } catch (Exception e) {
             risque = "Indisponible";
         }
@@ -102,9 +99,8 @@ public class ClientController {
      */
     @PostMapping("/patient/note/save")
     public String saveNote(@ModelAttribute("note") NoteDto note) {
-        String authHeader = "Basic dXNlcjpwYXNzd29yZA==";
         note.setDate(LocalDateTime.now());
-        noteProxy.addNote(note, authHeader);
+        noteProxy.addNote(note);
         return "redirect:/patient/" + note.getPatId();
     }
 
@@ -117,8 +113,7 @@ public class ClientController {
      */
     @GetMapping("/patient/update/{id}")
     public String updatePatientForm(@PathVariable("id") Long id, Model model) {
-        String authHeader = "Basic dXNlcjpwYXNzd29yZA==";
-        PatientDto patient = patientProxy.getPatient(id, authHeader);
+        PatientDto patient = patientProxy.getPatient(id);
         model.addAttribute("patient", patient);
         return "patient_update";
     }
@@ -132,8 +127,7 @@ public class ClientController {
      */
     @PostMapping("/patient/update/{id}")
     public String updatePatient(@PathVariable("id") Long id, @ModelAttribute("patient") PatientDto patient) {
-        String authHeader = "Basic dXNlcjpwYXNzd29yZA==";
-        patientProxy.updatePatient(id, patient, authHeader);
+        patientProxy.updatePatient(id, patient);
         return "redirect:/patient/" + id;
     }
 }

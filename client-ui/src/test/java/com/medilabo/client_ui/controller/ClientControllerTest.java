@@ -20,7 +20,6 @@ import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -58,7 +57,7 @@ public class ClientControllerTest {
         p1.setNom("Doe");
         List<PatientDto> patients = Arrays.asList(p1);
 
-        when(patientProxy.patients(anyString())).thenReturn(patients);
+        when(patientProxy.patients()).thenReturn(patients);
 
         mockMvc.perform(get("/"))
                 .andExpect(status().isOk())
@@ -80,9 +79,9 @@ public class ClientControllerTest {
         NoteDto n = new NoteDto();
         n.setNote("Patient en forme");
 
-        when(patientProxy.getPatient(anyLong(), anyString())).thenReturn(p);
-        when(noteProxy.getNotesByPatientId(anyInt(), anyString())).thenReturn(Collections.singletonList(n));
-        when(assessmentProxy.getAssessment(anyLong(), anyString())).thenReturn("None");
+        when(patientProxy.getPatient(anyLong())).thenReturn(p);
+        when(noteProxy.getNotesByPatientId(anyInt())).thenReturn(Collections.singletonList(n));
+        when(assessmentProxy.getAssessment(anyLong())).thenReturn("None");
 
         mockMvc.perform(get("/patient/1"))
                 .andExpect(status().isOk())
@@ -102,7 +101,7 @@ public class ClientControllerTest {
         PatientDto p = new PatientDto();
         p.setId(1L);
 
-        when(patientProxy.getPatient(anyLong(), anyString())).thenReturn(p);
+        when(patientProxy.getPatient(anyLong())).thenReturn(p);
 
         mockMvc.perform(get("/patient/update/1"))
                 .andExpect(status().isOk())
@@ -120,14 +119,14 @@ public class ClientControllerTest {
         PatientDto p = new PatientDto();
         p.setId(1L);
 
-        when(patientProxy.updatePatient(anyLong(), any(PatientDto.class), anyString())).thenReturn(p);
+        when(patientProxy.updatePatient(anyLong(), any(PatientDto.class))).thenReturn(p);
 
         mockMvc.perform(post("/patient/update/1")
                         .flashAttr("patient", p))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/patient/1"));
 
-        verify(patientProxy).updatePatient(anyLong(), any(PatientDto.class), anyString());
+        verify(patientProxy).updatePatient(anyLong(), any(PatientDto.class));
     }
 
     /**
@@ -140,13 +139,13 @@ public class ClientControllerTest {
         NoteDto n = new NoteDto();
         n.setPatId(1);
 
-        when(noteProxy.addNote(any(NoteDto.class), anyString())).thenReturn(n);
+        when(noteProxy.addNote(any(NoteDto.class))).thenReturn(n);
 
         mockMvc.perform(post("/patient/note/save")
                         .flashAttr("note", n))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/patient/1"));
 
-        verify(noteProxy).addNote(any(NoteDto.class), anyString());
+        verify(noteProxy).addNote(any(NoteDto.class));
     }
 }
